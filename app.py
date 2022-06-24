@@ -8,7 +8,7 @@ from moviesbot.message_processing import create_question
 
 app = Flask(__name__)
 cache = Cache(app, config={
-    'CACHE_TYPE': 'FileSystemCache ',
+    'CACHE_TYPE': 'FileSystemCache',
     'CACHE_DIR': '.flask_cache',
     'CACHE_DEFAULT_TIMEOUT': 300,
 })
