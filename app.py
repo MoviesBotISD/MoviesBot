@@ -1,13 +1,12 @@
 #Python libraries that we need to import for our bot
 import os
 import random
-import secrets
-from flask import Flask, request, session
+import json
+from flask import Flask, request
 from pymessenger.bot import Bot
 from moviesbot.message_processing import create_question
 
 app = Flask(__name__)
-app.secret_key = secrets.token_bytes(32)
 ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
 VERIFY_TOKEN = os.environ["VERIFY_TOKEN"]
 bot = Bot(ACCESS_TOKEN)
@@ -31,12 +30,14 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
-                        if not session.get('step'):
-                            session['step'] = 0
+                        with open("data/step.json", "r") as step_file:
+                            step_json = json.load(step_file)
+                        step = step_json['step']
                         message_text = message['message'].get('text')
-                        step = session['step']
                         response = create_question(step, message_text)
-                        session['step'] += 1
+                        step_json['step'] += 1
+                        with open("data/step.json", "w") as step_json:
+                            json.dump(step_json, step_file)
                         #response_sent_text = get_message()
                         send_message(recipient_id, response)
                     #if user sends us a GIF, photo,video, or any other non-text item
