@@ -31,7 +31,7 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
-                        if not session['step']:
+                        if not session.get('step'):
                             session['step'] = 0
                         message_text = message['message'].get('text')
                         step = session['step']
