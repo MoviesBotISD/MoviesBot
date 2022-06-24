@@ -31,6 +31,7 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
+                        global step
                         message_text = message['message'].get('text')
                         response = create_question(step, message_text)
                         step += 1
