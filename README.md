@@ -1,2 +1,2 @@
 # MoviesBot
-Chatbot for movies suggestion
+A chatbot project for movies suggestions using Facebook Messenger.
