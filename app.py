@@ -2,15 +2,20 @@
 import os
 import random
 from flask import Flask, request
+from flask_caching import Cache
 from pymessenger.bot import Bot
 from moviesbot.message_processing import create_question
 
 app = Flask(__name__)
+cache = Cache(app, config={
+    'CACHE_TYPE': 'FileSystemCache ',
+    'CACHE_DIR': '.flask_cache',
+    'CACHE_DEFAULT_TIMEOUT': 300,
+})
+
 ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
 VERIFY_TOKEN = os.environ["VERIFY_TOKEN"]
 bot = Bot(ACCESS_TOKEN)
-
-step = 0
 
 #We will receive messages that Facebook sends our bot at this endpoint 
 @app.route("/", methods=['GET', 'POST'])
@@ -31,10 +36,12 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
-                        global step
+                        if step is None:
+                            cache.set("step", 0)
                         message_text = message['message'].get('text')
+                        step = cache.get("step")
                         response = create_question(step, message_text)
-                        step += 1
+                        cache.set("step", step+1)
                         #response_sent_text = get_message()
                         send_message(recipient_id, response)
                     #if user sends us a GIF, photo,video, or any other non-text item
