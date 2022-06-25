@@ -20,9 +20,9 @@ def create_next_message(step, message):
     elif step == 1:
         sentences = sent_tokenize(message)
         avg_sentiment_score = compute_sentiment(sentences)
-        answer_json = utl.read_json("../data/answer.json")
+        answer_json = utl.read_json("data/answer.json")
         answer_json['answer']['mood'] = avg_sentiment_score
-        utl.write_json("../data/answer.json", answer_json)
+        utl.write_json("data/answer.json", answer_json)
         # if there is a sentence where he asks back, we answer him first before asking the next question
         if is_how_are_you(sentences):
             next_message = "I am doing great 😁, thanks for asking!\n"
@@ -50,10 +50,10 @@ def create_next_message(step, message):
             actor_name = ""
             for t in pmessage.ents:
                 if t.label_ == "PERSON":
-                    answer_json = utl.read_json("../data/answer.json")
+                    answer_json = utl.read_json("data/answer.json")
                     actor_name = "".join(t.text.strip().lower().split())
                     answer_json['answer']['actor'] = actor_name
-                    utl.write_json("../data/answer.json", answer_json)
+                    utl.write_json("data/answer.json", answer_json)
             if actor_name == "":
                 next_message = "Sorry, I did not understand that :/ can you repeat please?"
                 return next_message, False
