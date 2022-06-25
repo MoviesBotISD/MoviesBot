@@ -1,5 +1,6 @@
 """Module to process messages recieved by messegner chatbox
 """
+from audioop import avg
 import spacy
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.tokenize import sent_tokenize
@@ -7,8 +8,8 @@ from statistics import mean
 
 def create_question(step, message):
     if step == 0:
-        return "Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n\
-            How are you feeling today ?"
+        return ("Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n"
+                "How are you feeling today ?")
     elif step == 1:
         sia = SentimentIntensityAnalyzer()
         sentences = sent_tokenize(message)
@@ -24,6 +25,7 @@ def create_question(step, message):
             for qst_form in questions:
                 if nlp(sentence).similarity(nlp(qst_form)) > 0.9:
                     return "I am doing very good, thank you so much!"
+        return str(avg_sentiment_score)
 
     elif step == 2:
         pass

@@ -36,6 +36,8 @@ def receive_message():
                         message_text = message['message'].get('text')
                         response = create_question(step, message_text)
                         step_json['step'] += 1
+                        if step == 1:
+                            step_json['step'] = 0
                         with open("data/step.json", "w") as step_file:
                             json.dump(step_json, step_file)
                         #response_sent_text = get_message()
