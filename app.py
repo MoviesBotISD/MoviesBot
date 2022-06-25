@@ -34,9 +34,10 @@ def receive_message():
                         step_json = utl.read_json("data/step.json")
                         step = step_json['step']
                         message_text = message['message'].get('text')
-                        response = create_next_message(step, message_text)
-                        step_json['step'] += 1
-                        if step == 2:
+                        response, advance = create_next_message(step, message_text)
+                        if advance:
+                            step_json['step'] += 1
+                        if step == 5:
                             step_json['step'] = 0
                         utl.write_json("data/step.json", step_json)
                         #response_sent_text = get_message()
