@@ -23,8 +23,8 @@ def create_next_message(step, message):
             next_message = "I am doing great 😁, thanks for asking!\n"
         else:
             next_message = ""
-        next_message += ("Can you give me the name of a movie for which I can suggest you similar ones?\n",
-                        "if not, you can enter 'skip'")
+        next_message += ''.join(("Can you give me the name of a movie for which I can suggest you similar ones?\n",
+                        "if not, you can enter 'skip'"))
         return next_message
     elif step == 2:
         pass
