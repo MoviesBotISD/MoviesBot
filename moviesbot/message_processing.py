@@ -1,7 +1,7 @@
 """Module to process messages recieved by messegner chatbox
 """
 import spacy
-import utils as utl
+from . import utils as utl
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.tokenize import sent_tokenize
 from statistics import mean
