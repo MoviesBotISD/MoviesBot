@@ -4,7 +4,8 @@ import random
 import json
 from flask import Flask, request
 from pymessenger.bot import Bot
-from moviesbot.message_processing import create_question
+from moviesbot.message_processing import create_next_message
+from moviesbot import utils as utl
 
 app = Flask(__name__)
 ACCESS_TOKEN = os.environ["ACCESS_TOKEN"]
@@ -30,16 +31,14 @@ def receive_message():
                     #Facebook Messenger ID for user so we know where to send response back to
                     recipient_id = message['sender']['id']
                     if message['message'].get('text'):
-                        with open("data/step.json", "r") as step_file:
-                            step_json = json.load(step_file)
+                        step_json = utl.read_json("data/step.json")
                         step = step_json['step']
                         message_text = message['message'].get('text')
-                        response = create_question(step, message_text)
+                        response = create_next_message(step, message_text)
                         step_json['step'] += 1
-                        if step == 1:
+                        if step == 2:
                             step_json['step'] = 0
-                        with open("data/step.json", "w") as step_file:
-                            json.dump(step_json, step_file)
+                        utl.write_json("data/step.json", step_json)
                         #response_sent_text = get_message()
                         send_message(recipient_id, response)
                     #if user sends us a GIF, photo,video, or any other non-text item
