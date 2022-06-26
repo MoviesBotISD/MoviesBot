@@ -22,7 +22,7 @@ indices = pd.Series(df.index, index=df['title']).drop_duplicates()
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
-def get_recommendations(title, cosine_sim=None):#cosine_sim):
+def get_recommendations(title, cosine_sim=cosine_sim):
     # # Get the index of the movie that matches the title
     idx = indices[title]
     # Get the pairwsie similarity scores of all movies with that movie
