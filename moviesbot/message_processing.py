@@ -65,6 +65,8 @@ def create_next_message(step, message):
     elif step == 4:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
                         "if you have no preference, you can type 'skip'"))
+        answer_json = utl.read_json("data/answer.json")
+        next_message += str(answer_json)
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
