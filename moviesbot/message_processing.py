@@ -169,7 +169,7 @@ def duration_processing(message, next_message, nlp):
     is_short = any(a.strip().lower() == "short" for a in adj)
     is_long = any(a.strip().lower() == "long" for a in adj)
     if not time and not cardinal and not is_short and not is_long:
-        next_message += answer_side_questions(sentences, nlp)
+        next_message = answer_side_questions(sentences, nlp)
         next_message += "sorry, I did not understand your answer to my question :/ can you repeat please?"
         return (next_message, False, False)
     if not is_short and not is_long:
