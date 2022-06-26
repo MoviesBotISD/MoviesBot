@@ -37,5 +37,9 @@ def query_db(answer_json):
     dfn.sort_values(by=['runtime'])
     s = dfn.shape[0]
     if (answer['duration']=="short"):
-        return dfn[['tittle', 'homepage']][:s//2]
-    return dfn[['tittle', 'homepage']][s//2:]
+        df_results = dfn[['tittle', 'homepage']][:s//2]
+        movies_list = df_results.values.tolist()
+        return movies_list
+    df_results = dfn[['tittle', 'homepage']][s//2:]
+    movies_list = df_results.values.tolist()
+    return movies_list
