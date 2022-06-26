@@ -39,12 +39,23 @@ def receive_message():
                             step_json['step'] = step
                         if stop:
                             step_json['step'] = 0
+                            answer_init = {"answer": {
+                                "mood": "",
+                                "title": "",
+                                "actor": "",
+                                "director": "",
+                                "language": "",
+                                "duration": "",
+                                "description": ""
+                                }
+                            }
+                            utl.write_json("data/answer.json", answer_init)
                         utl.write_json("data/step.json", step_json)
                         #response_sent_text = get_message()
                         send_message(recipient_id, response)
                     #if user sends us a GIF, photo,video, or any other non-text item
                     if message['message'].get('attachments'):
-                        response_sent_nontext = get_message()
+                        response_sent_nontext = "Sorry, I cannot process media. You can communicate with me through text"
                         send_message(recipient_id, response_sent_nontext)
     return "Message Processed"
 
@@ -54,13 +65,6 @@ def verify_fb_token(token_sent):
     if token_sent == VERIFY_TOKEN:
         return request.args.get("hub.challenge")
     return 'Invalid verification token'
-
-
-#chooses a random message to send to the user
-def get_message():
-    sample_responses = ["You are stunning!", "We're proud of you.", "Keep on being you!", "We're greatful to know you :)"]
-    # return selected item to the user
-    return random.choice(sample_responses)
 
 #uses PyMessenger to send response to user
 def send_message(recipient_id, response):
