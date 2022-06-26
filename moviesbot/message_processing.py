@@ -12,6 +12,17 @@ from difflib import SequenceMatcher
 
 def create_next_message(step, message):
     if step == 0:
+        answer_init = {"answer": {
+                                "mood": "",
+                                "title": "",
+                                "actor": "",
+                                "director": "",
+                                "language": "",
+                                "duration": "",
+                                "description": ""
+                                }
+                            }
+        utl.write_json("data/answer.json", answer_init)
         next_message = ("Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n"
                 "How are you feeling today ?")
         return (next_message, True, False) # (next_message, advance, stop)
