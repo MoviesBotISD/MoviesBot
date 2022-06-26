@@ -25,11 +25,12 @@ def create_next_message(step, message):
         utl.write_json("data/answer.json", answer_init)
         next_message = ("Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n"
                 "How are you feeling today ?")
-        df = pd.read_csv("data/movies.csv")
-        next_message += f"{df.iloc[0]['title']}"
         return (next_message, True, False) # (next_message, advance, stop)
     elif step == 1:
-        return mood_processing(message)
+        nlp = spacy_load_corpus()
+        (next_message, advance, stop) = mood_processing(message, nlp)
+        del nlp
+        return (next_message, advance, stop)
     elif step == 2:
         if message.strip().lower() == "skip":
             next_message = "Ok, is there a specific actor you want to see in the movie ?\nif not, you can type 'skip'"
@@ -67,13 +68,11 @@ def create_next_message(step, message):
     elif step == 4:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
                         "if you have no preference, you can type 'skip'"))
-        answer_json = utl.read_json("data/answer.json")
-        next_message += str(answer_json)
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            (next_message, advance, stop) = language_processing(message, next_message, nlp)
+            (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'director')
             del nlp
             return (next_message, advance, stop)
     # elif step == 5:
@@ -89,20 +88,21 @@ def create_next_message(step, message):
     elif step == 5:
         next_message = "These are the best movies for you :D :\n"
         if message.strip().lower() != "skip":
-            keywords_processing(message)
+            nlp = spacy_load_corpus()
+            duration_processing(message, next_message, nlp)
+            del nlp
         answer_json = utl.read_json("data/answer.json")
         movies_list = query_db.query_db(answer_json)
         next_message += movies_list
         return (next_message, True, True)
 
-def mood_processing(message):
+def mood_processing(message, nlp):
     sentences = sent_tokenize(message)
     avg_sentiment_score = compute_sentiment(sentences)
     answer_json = utl.read_json("data/answer.json")
     answer_json['answer']['mood'] = avg_sentiment_score
     utl.write_json("data/answer.json", answer_json)
     # if there is a sentence where he asks back, we answer him first before asking the next question
-    nlp = spacy_load_corpus()
     next_message = answer_side_questions(sentences, nlp)
     next_message += ''.join(("can you give me the name of a movie for which I can suggest you similar ones?\n",
                     "if not, you can type 'skip'"))
