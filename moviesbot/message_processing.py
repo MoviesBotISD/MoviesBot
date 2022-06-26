@@ -25,6 +25,8 @@ def create_next_message(step, message):
         utl.write_json("data/answer.json", answer_init)
         next_message = ("Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n"
                 "How are you feeling today ?")
+        df = pd.read_csv("data/movies.csv")
+        next_message += f"{df.iloc[0]['title']}"
         return (next_message, True, False) # (next_message, advance, stop)
     elif step == 1:
         return mood_processing(message)
