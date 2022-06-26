@@ -3,9 +3,10 @@
 import pandas as pd
 import spacy
 try:
-    spacy.load("en_core_web_md")
+    nlp = spacy.load("en_core_web_md")
 except: # If not present, we download
     spacy.cli.download("en_core_web_md")
+    nlp = spacy.load("en_core_web_md")
 from . import utils as utl
 from . import query_db
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -15,7 +16,6 @@ from ast import literal_eval
 from difflib import SequenceMatcher
 
 def create_next_message(step, message):
-    nlp = spacy.load("en_core_web_md")
     if step == 0:
         next_message = ("Hello, I am MoviesBot :D, I can help you find a good movie according to you mood and likes!\n"
                 "How are you feeling today ?")
