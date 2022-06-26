@@ -12,6 +12,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.tokenize import sent_tokenize
 from statistics import mean
 from ast import literal_eval
+from difflib import SequenceMatcher
 
 def create_next_message(step, message):
     nlp = spacy.load("en_core_web_md")
@@ -27,11 +28,16 @@ def create_next_message(step, message):
             return (next_message, True, False)
         else:
             closest_title = title_processing(message, nlp)
-            next_message = f"These are the most similar movies to '{closest_title}' :\n"
-            answer_json = utl.read_json("data/answer.json")
-            movies_list = query_db.query_db(answer_json)
-            next_message += movies_list
-            return (next_message, True, True)
+            if not closest_title:
+                next_message = "Sorry, I don't know the movies title you have written :/\n"
+                next_message += "is there a specific actor you want to see in the movie ?\nif not, you can type 'skip'"
+                return (next_message, True, False)
+            else:
+                next_message = f"These are the most similar movies to '{closest_title}' :\n"
+                answer_json = utl.read_json("data/answer.json")
+                movies_list = query_db.query_db(answer_json)
+                next_message += movies_list
+                return (next_message, True, True)
     elif step == 3:
         next_message = "Got it, any specific director in your mind?\nif not, you can type 'skip'"
         if message.strip().lower() == "skip":
@@ -85,19 +91,22 @@ def title_processing(message, nlp):
     closest_title = df["title"][0]
     highest_similarity = 0
     for sentence in sentences:
-        sim = nlp(sentence).similarity(nlp(closest_title))
+        sim = SequenceMatcher(None, sentence, closest_title).ratio()
         if sim > highest_similarity:
             highest_similarity = sim
     for title in df["title"]:
         for sentence in sentences:
-            sim = nlp(sentence).similarity(nlp(title))
+            sim = SequenceMatcher(None, sentence, title).ratio()
             if sim > highest_similarity:
                 highest_similarity = sim
                 closest_title = title
-    answer_json = utl.read_json("data/answer.json")
-    answer_json['answer']['title'] = closest_title
-    utl.write_json("data/answer.json", answer_json)
-    return closest_title
+    if highest_similarity < 0.5:
+        return None
+    else:
+        answer_json = utl.read_json("data/answer.json")
+        answer_json['answer']['title'] = closest_title
+        utl.write_json("data/answer.json", answer_json)
+        return closest_title
 
 def person_name_processing(message, next_message, nlp, role):
     sentences = sent_tokenize(message)
