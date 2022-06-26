@@ -39,14 +39,18 @@ def create_next_message(step, message):
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return person_name_processing(message, next_message, nlp, 'actor')
+            (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'actor')
+            del nlp
+            return (next_message, advance, stop)
     elif step == 4:
         next_message = "I see, do you have a preference for the spoken language in the movie\nif not, you can type 'skip'"
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return person_name_processing(message, next_message, nlp, 'director')
+            (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'director')
+            del nlp
+            return (next_message, advance, stop)
     elif step == 5:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
                         "if you have no preference, you can type 'skip'"))
@@ -54,7 +58,9 @@ def create_next_message(step, message):
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return language_processing(message, next_message, nlp)
+            (next_message, advance, stop) = language_processing(message, next_message, nlp)
+            del nlp
+            return (next_message, advance, stop)
     elif step == 6:
         next_message = ''.join(("Perfect. If there is anything you want to add about the movie, feel free to write it\n",
                         "if not, you can type 'skip'"))
@@ -62,7 +68,9 @@ def create_next_message(step, message):
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return duration_processing(message, next_message, nlp)
+            (next_message, advance, stop) = duration_processing(message, next_message, nlp)
+            del nlp
+            return (next_message, advance, stop)
     elif step == 7:
         next_message = "These are the best movies for you :D :\n"
         if message.strip().lower() != "skip":
@@ -100,6 +108,7 @@ def title_processing(message):
             if sim > highest_similarity:
                 highest_similarity = sim
                 closest_title = title
+    del df
     if highest_similarity < 0.5:
         return None
     else:
@@ -184,11 +193,13 @@ def keywords_processing(message):
     keywords = []
     df = pd.read_csv("data/clean_movies.csv")
     kw_lists = df["keywords"].apply(literal_eval)
+    del df
     kw_set = set()
     def aux(i):
         for x in i:
             kw_set.add(x)
     kw_lists.apply(aux)
+    del kw_lists
     message = message.lower()
     for w in message.split():
         if w in kw_set:
@@ -200,6 +211,7 @@ def keywords_processing(message):
 def compute_sentiment(sentences):
     sia = SentimentIntensityAnalyzer()
     sentiment_scores = [sia.polarity_scores(sentence)["compound"] for sentence in sentences]
+    del sia
     avg_sentiment_score = mean(sentiment_scores)
     return avg_sentiment_score
 
