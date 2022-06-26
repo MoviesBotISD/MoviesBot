@@ -22,8 +22,7 @@ def create_next_message(step, message):
             next_message = "Ok, is there a specific actor you want to see in the movie ?\nif not, you can type 'skip'"
             return (next_message, True, False)
         else:
-            nlp = spacy_load_corpus()
-            closest_title = title_processing(message, nlp)
+            closest_title = title_processing(message)
             if not closest_title:
                 next_message = "Sorry, I don't know the movies title you have written :/\n"
                 next_message += "is there a specific actor you want to see in the movie ?\nif not, you can type 'skip'"
@@ -40,14 +39,14 @@ def create_next_message(step, message):
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return person_name_processing(message, next_message, nlp, role='actor')
+            return person_name_processing(message, next_message, nlp, 'actor')
     elif step == 4:
         next_message = "I see, do you have a preference for the spoken language in the movie\nif not, you can type 'skip'"
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
             nlp = spacy_load_corpus()
-            return person_name_processing(message, next_message, nlp, role='director')
+            return person_name_processing(message, next_message, nlp, 'director')
     elif step == 5:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
                         "if you have no preference, you can type 'skip'"))
@@ -80,12 +79,13 @@ def mood_processing(message):
     answer_json['answer']['mood'] = avg_sentiment_score
     utl.write_json("data/answer.json", answer_json)
     # if there is a sentence where he asks back, we answer him first before asking the next question
-    next_message = answer_side_questions(sentences)
+    nlp = spacy_load_corpus()
+    next_message = answer_side_questions(sentences, nlp)
     next_message += ''.join(("can you give me the name of a movie for which I can suggest you similar ones?\n",
                     "if not, you can type 'skip'"))
     return (next_message, True, False)
 
-def title_processing(message, nlp):
+def title_processing(message):
     sentences = sent_tokenize(message)
     df = pd.read_csv("data/clean_movies.csv")
     closest_title = df["title"][0]
@@ -119,7 +119,7 @@ def person_name_processing(message, next_message, nlp, role):
             answer_json['answer'][role] = person_name
             utl.write_json("data/answer.json", answer_json)
     if person_name == "":
-        next_message = answer_side_questions(sentences)
+        next_message = answer_side_questions(sentences, nlp)
         next_message += "sorry, I did not understand your answer to my question :/ can you repeat please?"
         return (next_message, False, False)
     else:
@@ -137,7 +137,7 @@ def language_processing(message, next_message, nlp):
             answer_json['answer']['language'] = language
             utl.write_json("data/answer.json", answer_json)
     if language == "":
-        next_message = answer_side_questions(sentences)
+        next_message = answer_side_questions(sentences, nlp)
         next_message += "sorry, I did not understand your answer to my question :/ can you repeat please?"
         return (next_message, False, False)
     else:
@@ -160,7 +160,7 @@ def duration_processing(message, next_message, nlp):
     is_short = any(a.strip().lower() == "short" for a in adj)
     is_long = any(a.strip().lower() == "long" for a in adj)
     if not time and not cardinal and not is_short and not is_long:
-        next_message += answer_side_questions(sentences, next_message)
+        next_message += answer_side_questions(sentences, nlp)
         next_message += "sorry, I did not understand your answer to my question :/ can you repeat please?"
         return (next_message, False, False)
     if not is_short and not is_long:
@@ -203,16 +203,15 @@ def compute_sentiment(sentences):
     avg_sentiment_score = mean(sentiment_scores)
     return avg_sentiment_score
 
-def answer_side_questions(sentences):
+def answer_side_questions(sentences, nlp):
     next_message = ""
-    if is_what_is_your_name(sentences):
+    if is_what_is_your_name(sentences, nlp):
         next_message += "My name is MoviesBot 🤖 it's always a pleasure to suggest you great movies 🎞!\nand "
-    if is_how_are_you(sentences):
+    if is_how_are_you(sentences, nlp):
         next_message += "I am doing great 😁, thanks for asking!\nand "
     return next_message
 
-def is_how_are_you(sentences):
-    nlp = spacy.load("en_core_web_md")
+def is_how_are_you(sentences, nlp):
     questions = ["how are you ?", "and you ?", "what about you ?", "you ?", "how are you doing ?", "how are you feeling ?"]
     for sentence in sentences:
         for qst_form in questions:
@@ -221,8 +220,7 @@ def is_how_are_you(sentences):
             else:
                 return False
 
-def is_what_is_your_name(sentences):
-    nlp = spacy.load("en_core_web_md")
+def is_what_is_your_name(sentences, nlp):
     questions = ["what is your name ?", "tell me your name", "remind me of your name", "your name ?"]
     for sentence in sentences:
         for qst_form in questions:
