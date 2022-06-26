@@ -42,16 +42,16 @@ def create_next_message(step, message):
             (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'actor')
             del nlp
             return (next_message, advance, stop)
+    # elif step == 4:
+    #     next_message = "I see, do you have a preference for the spoken language in the movie\nif not, you can type 'skip'"
+    #     if message.strip().lower() == "skip":
+    #         return (next_message, True, False)
+    #     else:
+    #         nlp = spacy_load_corpus()
+    #         (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'director')
+    #         del nlp
+    #         return (next_message, advance, stop)
     elif step == 4:
-        next_message = "I see, do you have a preference for the spoken language in the movie\nif not, you can type 'skip'"
-        if message.strip().lower() == "skip":
-            return (next_message, True, False)
-        else:
-            nlp = spacy_load_corpus()
-            (next_message, advance, stop) = person_name_processing(message, next_message, nlp, 'director')
-            del nlp
-            return (next_message, advance, stop)
-    elif step == 5:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
                         "if you have no preference, you can type 'skip'"))
         if message.strip().lower() == "skip":
@@ -61,17 +61,17 @@ def create_next_message(step, message):
             (next_message, advance, stop) = language_processing(message, next_message, nlp)
             del nlp
             return (next_message, advance, stop)
-    elif step == 6:
-        next_message = ''.join(("Perfect. If there is anything you want to add about the movie, feel free to write it\n",
-                        "if not, you can type 'skip'"))
-        if message.strip().lower() == "skip":
-            return (next_message, True, False)
-        else:
-            nlp = spacy_load_corpus()
-            (next_message, advance, stop) = duration_processing(message, next_message, nlp)
-            del nlp
-            return (next_message, advance, stop)
-    elif step == 7:
+    # elif step == 5:
+    #     next_message = ''.join(("Perfect. If there is anything you want to add about the movie, feel free to write it\n",
+    #                     "if not, you can type 'skip'"))
+    #     if message.strip().lower() == "skip":
+    #         return (next_message, True, False)
+    #     else:
+    #         nlp = spacy_load_corpus()
+    #         (next_message, advance, stop) = duration_processing(message, next_message, nlp)
+    #         del nlp
+    #         return (next_message, advance, stop)
+    elif step == 5:
         next_message = "These are the best movies for you :D :\n"
         if message.strip().lower() != "skip":
             keywords_processing(message)

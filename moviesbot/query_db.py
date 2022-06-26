@@ -33,9 +33,9 @@ def query_db(answer_json):
         dfn= df[[ act in l for l in df["cast"]]] 
     if (answer['director'] != ''):
         dirct = get_director_similar(answer['director'])
-        d2= dfn.query("director == @dirct")
-    d2.sort_values(by=['runtime'])
-    s=d2.shape[0]
+        dfn = dfn.query("director == @dirct")
+    dfn.sort_values(by=['runtime'])
+    s = dfn.shape[0]
     if (answer['duration']=="short"):
-        return d2[['tittle', 'homepage']][:s//2]
-    return d2[['tittle', 'homepage']][s//2:]
+        return dfn[['tittle', 'homepage']][:s//2]
+    return dfn[['tittle', 'homepage']][s//2:]
