@@ -215,7 +215,7 @@ def is_how_are_you(sentences, nlp):
     questions = ["how are you ?", "and you ?", "what about you ?", "you ?", "how are you doing ?", "how are you feeling ?"]
     for sentence in sentences:
         for qst_form in questions:
-            if nlp(sentence).similarity(nlp(qst_form)) > 0.9:
+            if nlp(sentence).similarity(nlp(qst_form)) > 0.97:
                 return True
             else:
                 return False
@@ -224,7 +224,7 @@ def is_what_is_your_name(sentences, nlp):
     questions = ["what is your name ?", "tell me your name", "remind me of your name", "your name ?"]
     for sentence in sentences:
         for qst_form in questions:
-            if nlp(sentence).similarity(nlp(qst_form)) > 0.9:
+            if nlp(sentence).similarity(nlp(qst_form)) > 0.97:
                 return True
             else:
                 return False
