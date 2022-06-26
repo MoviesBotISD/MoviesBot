@@ -2,11 +2,6 @@
 """
 import pandas as pd
 import spacy
-try:
-    nlp = spacy.load("en_core_web_md")
-except: # If not present, we download
-    spacy.cli.download("en_core_web_md")
-    nlp = spacy.load("en_core_web_md")
 from . import utils as utl
 from . import query_db
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -27,6 +22,7 @@ def create_next_message(step, message):
             next_message = "Ok, is there a specific actor you want to see in the movie ?\nif not, you can type 'skip'"
             return (next_message, True, False)
         else:
+            nlp = spacy_load_corpus()
             closest_title = title_processing(message, nlp)
             if not closest_title:
                 next_message = "Sorry, I don't know the movies title you have written :/\n"
@@ -43,12 +39,14 @@ def create_next_message(step, message):
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
+            nlp = spacy_load_corpus()
             return person_name_processing(message, next_message, nlp, role='actor')
     elif step == 4:
         next_message = "I see, do you have a preference for the spoken language in the movie\nif not, you can type 'skip'"
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
+            nlp = spacy_load_corpus()
             return person_name_processing(message, next_message, nlp, role='director')
     elif step == 5:
         next_message = ''.join(("Thank you! What about the duration? Do you want a short or a long movie?\n",
@@ -56,6 +54,7 @@ def create_next_message(step, message):
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
+            nlp = spacy_load_corpus()
             return language_processing(message, next_message, nlp)
     elif step == 6:
         next_message = ''.join(("Perfect. If there is anything you want to add about the movie, feel free to write it\n",
@@ -63,6 +62,7 @@ def create_next_message(step, message):
         if message.strip().lower() == "skip":
             return (next_message, True, False)
         else:
+            nlp = spacy_load_corpus()
             return duration_processing(message, next_message, nlp)
     elif step == 7:
         next_message = "These are the best movies for you :D :\n"
@@ -230,3 +230,11 @@ def is_what_is_your_name(sentences):
                 return True
             else:
                 return False
+
+def spacy_load_corpus():
+    try:
+        nlp = spacy.load("en_core_web_md")
+    except: # If not present, we download
+        spacy.cli.download("en_core_web_md")
+        nlp = spacy.load("en_core_web_md")
+    return nlp
