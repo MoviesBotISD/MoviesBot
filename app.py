@@ -1,6 +1,5 @@
 #Python libraries that we need to import for our bot
 import os
-import random
 from flask import Flask, request
 from pymessenger.bot import Bot
 from moviesbot.message_processing import create_next_message

@@ -95,7 +95,7 @@ def mood_processing(message):
 
 def title_processing(message):
     sentences = sent_tokenize(message)
-    df = pd.read_csv("data/clean_movies.csv")
+    df = pd.read_csv("data/movies.csv")
     closest_title = df["title"][0]
     highest_similarity = 0
     for sentence in sentences:
@@ -191,7 +191,7 @@ def duration_processing(message, next_message, nlp):
 
 def keywords_processing(message):
     keywords = []
-    df = pd.read_csv("data/clean_movies.csv")
+    df = pd.read_csv("data/movies.csv")
     kw_lists = df["keywords"].apply(literal_eval)
     del df
     kw_set = set()

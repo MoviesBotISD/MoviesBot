@@ -3,7 +3,7 @@
 import pandas as pd
 from difflib import SequenceMatcher
 
-df = pd.read_csv("data/clean_movies.csv")
+df = pd.read_csv("data/movies.csv")
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
