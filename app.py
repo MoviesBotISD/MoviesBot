@@ -1,7 +1,6 @@
 #Python libraries that we need to import for our bot
 import os
 import random
-import json
 from flask import Flask, request
 from pymessenger.bot import Bot
 from moviesbot.message_processing import create_next_message
@@ -34,10 +33,11 @@ def receive_message():
                         step_json = utl.read_json("data/step.json")
                         step = step_json['step']
                         message_text = message['message'].get('text')
-                        response, advance = create_next_message(step, message_text)
+                        response, advance, stop = create_next_message(step, message_text)
                         if advance:
-                            step_json['step'] += 1
-                        if step == 5:
+                            step += 1
+                            step_json['step'] = step
+                        if stop:
                             step_json['step'] = 0
                         utl.write_json("data/step.json", step_json)
                         #response_sent_text = get_message()
