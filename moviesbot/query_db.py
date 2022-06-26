@@ -79,8 +79,8 @@ def query_db(answer_json):
     s = dfn.shape[0]
     if (answer['duration']=="short"):
         df_results = dfn[['tittle', 'homepage']][:s//2]
-        movies_list = str(df_results.values.tolist())
+        movies_list = str(df_results[:3].values.tolist())
         return movies_list
     df_results = dfn[['tittle', 'homepage']][s//2:]
-    movies_list = str(df_results.values.tolist())
+    movies_list = str(df_results[:3].values.tolist())
     return movies_list
